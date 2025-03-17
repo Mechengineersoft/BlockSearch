@@ -15,7 +15,7 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
     console.log('Starting search with params:', { blockNo, partNo, thickness });
 
     // Specify the exact range in the "Data" tab
-    const range = "Data!A2:F"; // Columns A-F, starting from row 2
+    const range = "Data!A2:D"; // Columns A-D, starting from row 2
     console.log('Fetching from range:', range);
 
     const response = await sheets.spreadsheets.values.get({
