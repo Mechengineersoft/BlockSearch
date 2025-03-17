@@ -1,4 +1,5 @@
 import { SearchResult } from "@shared/schema";
+import { apiRequest } from "./queryClient";
 
 export async function searchSheetData(blockNo: string, partNo?: string, thickness?: string): Promise<SearchResult[]> {
   const params = new URLSearchParams();
@@ -6,9 +7,6 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
   if (partNo) params.append('partNo', partNo);
   if (thickness) params.append('thickness', thickness);
 
-  const response = await fetch(`/api/search?${params}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch search results');
-  }
+  const response = await apiRequest('GET', `/api/search?${params}`);
   return response.json();
 }

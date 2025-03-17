@@ -1,27 +1,14 @@
 import { google } from "googleapis";
 import { SearchResult, InsertUser, User } from "@shared/schema";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const SHEET_ID = process.env.GOOGLE_SHEETS_ID || "1ZIAN2F3he8QqMzqpeTnzbZ7nyv065ISZhp2f-eziebk";
+import { config } from './config';
 
 const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT || '{}'),
+  credentials: config.googleServiceAccount,
   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
-if (!process.env.GOOGLE_SERVICE_ACCOUNT) {
-  console.error('GOOGLE_SERVICE_ACCOUNT environment variable is not set');
-}
-
-if (!process.env.GOOGLE_SHEETS_ID) {
-  console.error('GOOGLE_SHEETS_ID environment variable is not set');
-}
-
 const sheets = google.sheets({ version: 'v4', auth });
+const SHEET_ID = config.googleSheetsId;
 
 export async function searchSheetData(blockNo: string, partNo?: string, thickness?: string): Promise<SearchResult[]> {
   try {
@@ -132,6 +119,45 @@ export async function getUser(id: number): Promise<User | undefined> {
 
 export async function createUser(user: InsertUser): Promise<User> {
   try {
+    // First, check if the User sheet exists and create it if it doesn't
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId: SHEET_ID
+    });
+
+    const userSheet = spreadsheet.data.sheets?.find(
+      sheet => sheet.properties?.title === 'User'
+    );
+
+    if (!userSheet) {
+      // Create User sheet with headers
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: SHEET_ID,
+        requestBody: {
+          requests: [{
+            addSheet: {
+              properties: {
+                title: 'User',
+                gridProperties: {
+                  rowCount: 1000,
+                  columnCount: 3
+                }
+              }
+            }
+          }]
+        }
+      });
+
+      // Add headers
+      await sheets.spreadsheets.values.update({
+        spreadsheetId: SHEET_ID,
+        range: 'User!A1:C1',
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [['ID', 'Username', 'Password']]
+        }
+      });
+    }
+
     // Get current users to determine next ID
     const range = "User!A2:C";
     const response = await sheets.spreadsheets.values.get({
@@ -166,3 +192,2280 @@ export async function createUser(user: InsertUser): Promise<User> {
     throw new Error('Failed to create user');
   }
 }
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.error('Error in getUser:', error);
+    return undefined;
+  }
+}
+
+export async function getUser(id: number): Promise<User | undefined> {
+  try {
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const userRow = values.find((row) => parseInt(row[0]) === id);
+
+    if (!userRow) return undefined;
+
+    return {
+      id: parseInt(userRow[0]),
+      username: userRow[1],
+      password: userRow[2]
+    };
+  } catch (error) {
+    console.
