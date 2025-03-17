@@ -14,6 +14,8 @@ services:
         sync: false
         fromFile: ./attached_assets/Pasted--type-service-account-project-id-login-451104-private-key-id-f7572c98e315d-1739682704374.txt
       - key: SESSION_SECRET
+        sync: false
         generateValue: true
+        length: 32
     healthCheckPath: /api/health
     autoDeploy: true
