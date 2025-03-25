@@ -15,7 +15,7 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
     console.log('Starting search with params:', { blockNo, partNo, thickness });
 
     // Specify the exact range in the "Data" tab
-    const range = "Data!A2:F"; // Columns A-F, starting from row 2
+    const range = "Data!A2:W"; // Columns A through W (23 columns), starting from row 2
     console.log('Fetching from range:', range);
 
     const response = await sheets.spreadsheets.values.get({
@@ -57,8 +57,25 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
         partNo: row[1] || '',
         thickness: row[2] || '',
         nos: row[3] || '',
-        color1: row[4] || '',
-        color2: row[5] || ''
+        grinding: row[4] || '',
+        netting: row[5] || '',
+        epoxy: row[6] || '',
+        polished: row[7] || '',
+        leather: row[8] || '',
+        lapotra: row[9] || '',
+        honed: row[10] || '',
+        shot: row[11] || '',
+        polR: row[12] || '',
+        bal: row[13] || '',
+        bSP: row[14] || '',
+        edge: row[15] || '',
+        meas: row[16] || '',
+        lCm: row[17] || '',
+        hCm: row[18] || '',
+        color1: row[19] || '',
+        color2: row[20] || '',
+        status: row[21] || '',
+        date: row[22] || ''
       }));
 
     console.log(`Returning ${results.length} results`);
@@ -119,6 +136,20 @@ export async function getUser(id: number): Promise<User | undefined> {
 
 export async function createUser(user: InsertUser): Promise<User> {
   try {
+    // Check if username already exists
+    const range = "User!A2:C";
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SHEET_ID,
+      range,
+    });
+
+    const values = response.data.values || [];
+    const existingUsername = values.find((row) => row[1]?.toString().toLowerCase() === user.username.toLowerCase());
+
+    if (existingUsername) {
+      throw new Error('Username already taken');
+    }
+
     // First, check if the User sheet exists and create it if it doesn't
     const spreadsheet = await sheets.spreadsheets.get({
       spreadsheetId: SHEET_ID
@@ -150,24 +181,24 @@ export async function createUser(user: InsertUser): Promise<User> {
       // Add headers
       await sheets.spreadsheets.values.update({
         spreadsheetId: SHEET_ID,
-        range: 'User!A1:C1',
+        range: 'User!A1:D1',
         valueInputOption: 'RAW',
         requestBody: {
-          values: [['ID', 'Username', 'Password']]
+          values: [['ID', 'Username', 'Password', 'Email']]
         }
       });
     }
 
     // Get current users to determine next ID
-    const range = "User!A2:C";
-    const response = await sheets.spreadsheets.values.get({
+    const userRange = "User!A2:C";
+    const userResponse = await sheets.spreadsheets.values.get({
       spreadsheetId: SHEET_ID,
-      range,
+      range: userRange,
     });
 
-    const values = response.data.values || [];
-    const newId = values.length > 0 
-      ? Math.max(...values.map(row => parseInt(row[0] || '0'))) + 1 
+    const userValues = userResponse.data.values || [];
+    const newId = userValues.length > 0 
+      ? Math.max(...userValues.map(row => parseInt(row[0] || '0'))) + 1 
       : 1;
 
     const newUser: User = {
@@ -179,10 +210,10 @@ export async function createUser(user: InsertUser): Promise<User> {
     // Append new user
     await sheets.spreadsheets.values.append({
       spreadsheetId: SHEET_ID,
-      range: "User!A:C",
+      range: "User!A:D",
       valueInputOption: "RAW",
       requestBody: {
-        values: [[newUser.id, newUser.username, newUser.password]]
+        values: [[newUser.id, newUser.username, newUser.password, user.email]]
       }
     });
 

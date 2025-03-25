@@ -1,25 +1,59 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema, type InsertUser } from "@shared/schema";
-import { Redirect } from "wouter";
+import { Redirect, Link } from "wouter";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
 
 export default function AuthPage() {
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, loginMutation } = useAuth();
+  const [tempUserId, setTempUserId] = useState<string>();
 
-  const loginForm = useForm<InsertUser>({
-    resolver: zodResolver(insertUserSchema)
+  interface LoginData extends Pick<InsertUser, 'username' | 'password'> {
+    rememberMe: boolean;
+  }
+
+  const loginForm = useForm<LoginData>({  // Changed from InsertUser to LoginData
+    resolver: zodResolver(insertUserSchema.pick({ username: true, password: true }).extend({
+      rememberMe: z.boolean().optional().default(false)
+    }))
   });
 
   const registerForm = useForm<InsertUser>({
     resolver: zodResolver(insertUserSchema)
   });
+
+  const registerMutation = useMutation({
+    mutationFn: async (data: InsertUser) => {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      const result = await response.json();
+      if (result.tempUserId) {
+        setTempUserId(result.tempUserId);
+      }
+      return result;
+    }
+  });
+
+  if (tempUserId) {
+    const email = registerForm.getValues("email");
+    return <Redirect to={`/verify-otp?id=${tempUserId}&email=${encodeURIComponent(email)}`} />;
+  }
 
   if (user) {
     return <Redirect to="/" />;
@@ -53,12 +87,29 @@ export default function AuthPage() {
                     </div>
                     <div>
                       <Label htmlFor="login-password">Password</Label>
-                      <Input type="password" id="login-password" {...loginForm.register("password")} />
+                      <PasswordInput id="login-password" {...loginForm.register("password")} />
                       {loginForm.formState.errors.password && (
                         <p className="text-sm text-destructive mt-1">
                           {loginForm.formState.errors.password.message}
                         </p>
                       )}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="remember-me"
+                        {...loginForm.register("rememberMe")}
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <Label htmlFor="remember-me">Remember me</Label>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <Link href="/forgot-username" className="text-sm text-primary hover:underline">
+                        Forgot Username?
+                      </Link>
+                      <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                        Forgot Password?
+                      </Link>
                     </div>
                     <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                       {loginMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -86,8 +137,17 @@ export default function AuthPage() {
                       )}
                     </div>
                     <div>
+                      <Label htmlFor="register-email">Email</Label>
+                      <Input type="email" id="register-email" {...registerForm.register("email")} />
+                      {registerForm.formState.errors.email && (
+                        <p className="text-sm text-destructive mt-1">
+                          {registerForm.formState.errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                    <div>
                       <Label htmlFor="register-password">Password</Label>
-                      <Input type="password" id="register-password" {...registerForm.register("password")} />
+                      <PasswordInput id="register-password" {...registerForm.register("password")} />
                       {registerForm.formState.errors.password && (
                         <p className="text-sm text-destructive mt-1">
                           {registerForm.formState.errors.password.message}
@@ -110,12 +170,11 @@ export default function AuthPage() {
           </CardContent>
         </Card>
       </div>
-      <div className="hidden md:flex bg-primary/5 items-center justify-center p-8">
-        <div className="max-w-md space-y-4">
-          <h1 className="text-4xl font-bold">Sheet Search</h1>
-          <p className="text-lg text-muted-foreground">
-            Search and visualize your Google Sheets data with ease. Color-coded results
-            and powerful filtering capabilities at your fingertips.
+      <div className="bg-gray-100 flex items-center justify-center p-8">
+        <div className="text-left max-w-md">
+          <h2 className="text-3xl font-bold mb-4">Sheet Search Portal</h2>
+          <p className="text-lg text-gray-700">
+            Access and search through your Google Sheets data efficiently. Login or register to get started with our powerful search features.
           </p>
         </div>
       </div>
