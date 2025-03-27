@@ -72,10 +72,10 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
         meas: row[16] || '',
         lCm: row[17] || '',
         hCm: row[18] || '',
-        color1: row[22] || '',
-        color2: row[23] || '',
-        status: row[20] || '',
-        date: row[21] || ''
+        status: row[19] || '',
+        date: row[20] || '',
+        color1: row[21] || '',
+        color2: row[22] || ''
       }));
 
     console.log(`Returning ${results.length} results`);
