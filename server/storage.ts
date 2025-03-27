@@ -39,12 +39,11 @@ export class GoogleSheetsStorage implements IStorage {
     } else {
       this.sessionStore = new FileStoreSession({
         path: './sessions',
-        ttl: 30 * 24 * 60 * 60 // 30 days
+        ttl: 30 * 24 * 60 * 60, // 30 days
+        retries: 1,
+        reapInterval: 3600 // Clean expired sessions hourly
       });
     }
-      retries: 1,
-      reapInterval: 3600 // Clean expired sessions hourly
-    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
