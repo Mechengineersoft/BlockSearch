@@ -8,7 +8,8 @@ import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import nodemailer from "nodemailer";
 import { createClient } from "redis";
-import { createRedisStore } from "connect-redis";
+import { createClient } from "redis";
+import { RedisStore } from "connect-redis";
 
 // Initialize Redis client and store
 const redisClient = createClient({
@@ -16,7 +17,7 @@ const redisClient = createClient({
 });
 redisClient.connect().catch(console.error);
 
-const redisStore = new createRedisStore({
+const redisStore = new RedisStore({
   client: redisClient,
   prefix: "sheetsearch:",
 });
