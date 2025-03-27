@@ -39,8 +39,8 @@ export default function HomePage() {
 
   // Show color samples from the first result if available
   const headerColors = results?.[0] ? {
-    color1: results[0].row[21],
-    color2: results[0].row[22],
+    color1: results[0].color1,
+    color2: results[0].color2,
   } : null;
 
   return (
@@ -182,24 +182,7 @@ export default function HomePage() {
                       <TableCell>{result.hCm}</TableCell>
                       <TableCell>{result.status}</TableCell>
                       <TableCell>{result.date}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded"
-                            style={{ backgroundColor: result.color1 }}
-                          />
-                          {result.color1}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="w-6 h-6 rounded"
-                            style={{ backgroundColor: result.color2 }}
-                          />
-                          {result.color2}
-                        </div>
-                      </TableCell>
+                      
                     </TableRow>
                   ))}
                 </TableBody>
