@@ -1,6 +1,8 @@
 import { users, type User, type InsertUser } from "@shared/schema";
 import session from "express-session";
 import FileStore from "session-file-store";
+import RedisStore from "connect-redis";
+import { createClient } from "redis";
 import { getUserByUsername, getUser, createUser } from "./google-sheets";
 import { google } from "googleapis";
 import { config } from './config';
@@ -25,9 +27,21 @@ export class GoogleSheetsStorage implements IStorage {
   sessionStore: session.Store;
 
   constructor() {
-    this.sessionStore = new FileStoreSession({
-      path: './sessions',
-      ttl: 30 * 24 * 60 * 60, // 30 days
+    if (config.nodeEnv === 'production') {
+      const redisClient = createClient({
+        url: process.env.REDIS_URL || 'redis://localhost:6379'
+      });
+      redisClient.connect().catch(console.error);
+      this.sessionStore = new RedisStore({
+        client: redisClient,
+        ttl: 30 * 24 * 60 * 60 // 30 days
+      });
+    } else {
+      this.sessionStore = new FileStoreSession({
+        path: './sessions',
+        ttl: 30 * 24 * 60 * 60 // 30 days
+      });
+    }
       retries: 1,
       reapInterval: 3600 // Clean expired sessions hourly
     });
