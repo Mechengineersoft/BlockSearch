@@ -154,8 +154,8 @@ export default function HomePage() {
                     <TableHead className="font-bold text-white">H cm</TableHead>
                     <TableHead className="font-bold text-white">Status</TableHead>
                     <TableHead className="font-bold text-white">Date</TableHead>
-                    <TableHead className="font-bold text-white">Color1</TableHead>
-                    <TableHead className="font-bold text-white">Color2</TableHead>
+                    
+                    
                   </TableRow>
                 </TableHeader>
                 <TableBody>
