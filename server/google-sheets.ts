@@ -73,9 +73,9 @@ export async function searchSheetData(blockNo: string, partNo?: string, thicknes
         lCm: row[17] || '',
         hCm: row[18] || '',
         status: row[19] || '',
-        date: row[20] || '',
-        color1: row[21] || '',
-        color2: row[22] || ''
+        date: row[20] || ''
+        
+        
       }));
 
     console.log(`Returning ${results.length} results`);

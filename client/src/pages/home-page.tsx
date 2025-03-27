@@ -39,8 +39,8 @@ export default function HomePage() {
 
   // Show color samples from the first result if available
   const headerColors = results?.[0] ? {
-    color1: results[0].color1,
-    color2: results[0].color2,
+    color1: results[0].row[21],
+    color2: results[0].row[22],
   } : null;
 
   return (
