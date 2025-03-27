@@ -1,7 +1,6 @@
 import { users, type User, type InsertUser } from "@shared/schema";
 import session from "express-session";
 import FileStore from "session-file-store";
-import RedisStore from "connect-redis";
 import { createClient } from "redis";
 import { getUserByUsername, getUser, createUser } from "./google-sheets";
 import { google } from "googleapis";
@@ -32,10 +31,14 @@ export class GoogleSheetsStorage implements IStorage {
         url: process.env.REDIS_URL || 'redis://localhost:6379'
       });
       redisClient.connect().catch(console.error);
-      this.sessionStore = new RedisStore({
-        client: redisClient,
-        ttl: 30 * 24 * 60 * 60 // 30 days
-      });
+      // Import RedisStore dynamically to fix ESM compatibility
+      import('connect-redis').then((module) => {
+        const RedisStore = module.default;
+        this.sessionStore = new RedisStore({
+          client: redisClient,
+          ttl: 30 * 24 * 60 * 60 // 30 days
+        });
+      }).catch(console.error);
     } else {
       this.sessionStore = new FileStoreSession({
         path: './sessions',
