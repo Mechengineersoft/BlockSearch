@@ -7,6 +7,19 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import nodemailer from "nodemailer";
+import { createClient } from "redis";
+import RedisStore from "connect-redis";
+
+// Initialize Redis client and store
+const redisClient = createClient({
+  url: process.env.REDIS_URL || 'redis://localhost:6379'
+});
+redisClient.connect().catch(console.error);
+
+const redisStore = new RedisStore({
+  client: redisClient,
+  prefix: "sheetsearch:",
+});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -61,7 +74,7 @@ export function setupAuth(app: Express) {
     secret: process.env.SESSION_SECRET || 'default-secret-key-for-development-only',
     resave: false,
     saveUninitialized: false,
-    store: storage.sessionStore,
+    store: redisStore,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
